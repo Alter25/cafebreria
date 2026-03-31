@@ -1,0 +1,57 @@
+---
+const photos = [
+  { src: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=800&q=80", alt: "Latte art",              span: "tall" },
+  { src: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80", alt: "Interior del café",        span: "" },
+  { src: "https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?w=800&q=80", alt: "Croissant recién horneado", span: "" },
+  { src: "https://images.unsplash.com/photo-1506619216599-9d16d0903dfd?w=800&q=80", alt: "Barra de café",          span: "wide" },
+  { src: "https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=800&q=80", alt: "Taza de espresso",       span: "" },
+  { src: "https://images.unsplash.com/photo-1559305616-3f99cd43e353?w=800&q=80", alt: "Detalle de granos",         span: "" },
+];
+---
+
+<section class="py-28 px-8 bg-cream" id="galeria">
+  <div class="max-w-[1100px] mx-auto">
+
+    <div class="text-center mb-12 reveal">
+      <p class="font-ui text-[0.78rem] font-semibold tracking-[0.18em] uppercase text-ember mb-2">
+        Momentos en La Leña
+      </p>
+      <h2 class="font-display text-[clamp(2rem,4vw,3rem)] font-bold text-bark-dark">
+        Una imagen dice más
+      </h2>
+    </div>
+
+    <!--
+      Masonry-style grid.
+      Tailwind no tiene clases para grid-row: span 2 de forma dinámica,
+      así que usamos clases arbitrarias [grid-row:span_2] y [grid-column:span_2].
+    -->
+    <div class="grid grid-cols-3 max-sm:grid-cols-2 auto-rows-[220px] max-sm:auto-rows-[150px] gap-3">
+      {photos.map(photo => (
+        <div
+          class:list={[
+            "relative overflow-hidden rounded-[10px] cursor-pointer group",
+            photo.span === "tall" && "[grid-row:span_2]",
+            photo.span === "wide" && "[grid-column:span_2] max-sm:[grid-column:span_1]",
+          ]}
+        >
+          <img
+            src={photo.src}
+            alt={photo.alt}
+            loading="lazy"
+            class="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500"
+          />
+          <!-- Hover overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-bark-dark/70 to-transparent
+                      opacity-0 group-hover:opacity-100 transition-opacity duration-300
+                      flex items-end p-4">
+            <span class="font-ui text-[0.82rem] font-semibold text-white tracking-[0.04em]">
+              {photo.alt}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>

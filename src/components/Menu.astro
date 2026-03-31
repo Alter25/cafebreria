@@ -1,0 +1,134 @@
+---
+const categories = [
+  {
+    label: "Café",
+    items: [
+      { name: "Espresso La Leña",   desc: "Blend de origen único, notas de cacao y caramelo tostado.", price: "$45", tag: "Favorito" },
+      { name: "Latte de Piloncillo", desc: "Espresso doble con leche vaporizada y piloncillo artesanal.", price: "$65", tag: "" },
+      { name: "Cold Brew 18h",       desc: "Extracción lenta en frío, suave y aterciopelado. Sin azúcar.", price: "$70", tag: "Nuevo" },
+      { name: "Café de Olla",        desc: "Receta tradicional con canela y cáscara de naranja.", price: "$40", tag: "" },
+    ]
+  },
+  {
+    label: "Cocina",
+    items: [
+      { name: "Tostada de Aguacate", desc: "Pan masa madre, aguacate, jitomate heirloom y chile serrano.", price: "$95",  tag: "Popular" },
+      { name: "Huevos Rancheros",    desc: "Tortillas de maíz, salsa roja ahumada y queso Oaxaca.", price: "$110", tag: "" },
+      { name: "Bowl de Granola",     desc: "Granola artesanal, yogurt griego, miel de abeja y frutas de temporada.", price: "$85", tag: "" },
+      { name: "Pan Francés Brioche", desc: "Pan brioche de la casa, cajeta, nuez y crema batida.", price: "$90",  tag: "" },
+    ]
+  },
+  {
+    label: "Panadería",
+    items: [
+      { name: "Croissant de Mantequilla", desc: "Hojaldrado, 72 horas de fermentación en frío.", price: "$55", tag: "Hecho aquí" },
+      { name: "Scone de Naranja",         desc: "Con glaseado de cítricos y cardamomo.", price: "$50", tag: "" },
+      { name: "Concha de Vainilla",       desc: "Pan de tradición mexicana, esponjoso con costra dulce.", price: "$35", tag: "" },
+      { name: "Brownie Fundido",          desc: "Chocolate obscuro 70%, nuez y flor de sal.", price: "$60", tag: "" },
+    ]
+  }
+];
+---
+
+<section class="relative py-28 px-8 bg-cream overflow-hidden" id="menu">
+
+  <!-- Deco blob -->
+  <div class="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full
+              bg-radial-[circle] from-parchment to-transparent pointer-events-none"></div>
+
+  <div class="max-w-[1100px] mx-auto">
+
+    <!-- Header -->
+    <div class="text-center mb-12 reveal">
+      <p class="font-ui text-[0.78rem] font-semibold tracking-[0.18em] uppercase text-ember mb-2">
+        Lo que preparamos
+      </p>
+      <h2 class="font-display text-[clamp(2.2rem,4vw,3.2rem)] font-bold text-bark-dark mb-3">
+        Nuestro menú
+      </h2>
+      <p class="font-body text-ink-soft max-w-[48ch] mx-auto text-base">
+        Ingredientes locales, recetas con historia y mucho cuidado en cada taza.
+      </p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex justify-center gap-2 mb-10 flex-wrap" id="menu-tabs">
+      {categories.map((cat, i) => (
+        <button
+          data-tab={i}
+          class:list={[
+            "font-ui text-[0.82rem] font-semibold uppercase tracking-[0.06em] px-5 py-2 rounded-full border cursor-pointer transition-all duration-200",
+            i === 0
+              ? "bg-bark border-bark text-cream"
+              : "bg-transparent border-parchment text-ink-soft hover:border-bark-light hover:text-bark"
+          ]}
+        >
+          {cat.label}
+        </button>
+      ))}
+    </div>
+
+    <!-- Panels -->
+    {categories.map((cat, i) => (
+      <div
+        data-panel={i}
+        class:list={[
+          "grid gap-6 animate-fade-up",
+          "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
+          i !== 0 && "hidden"
+        ]}
+      >
+        {cat.items.map(item => (
+          <div class="bg-white border border-parchment rounded-[10px] p-6 flex flex-col gap-3
+                      hover:shadow-[0_8px_30px_rgba(62,42,20,0.22)] hover:-translate-y-1
+                      transition-all duration-200">
+            {item.tag && (
+              <span class="font-ui text-[0.65rem] font-bold uppercase tracking-[0.1em]
+                           bg-cream-dark text-bark px-3 py-1 rounded-full self-start">
+                {item.tag}
+              </span>
+            )}
+            <div class="flex-1">
+              <h3 class="font-display text-[1.05rem] font-bold text-bark-dark mb-1">{item.name}</h3>
+              <p class="font-ui text-[0.85rem] text-ink-soft leading-snug">{item.desc}</p>
+            </div>
+            <div class="border-t border-dashed border-parchment pt-3">
+              <span class="font-display text-xl font-bold text-ember">{item.price}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    ))}
+
+    <!-- Nota al pie -->
+    <div class="flex items-center justify-center gap-2 max-w-[560px] mx-auto mt-12
+                bg-cream-dark rounded-lg px-6 py-4 reveal">
+      <span>🌿</span>
+      <p class="font-ui text-[0.88rem] text-ink-soft">
+        Todos nuestros productos son elaborados diariamente. Pregunta por opciones sin gluten o veganas.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  const tabs   = document.querySelectorAll('[data-tab]');
+  const panels = document.querySelectorAll('[data-panel]');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const idx = tab.getAttribute('data-tab');
+
+      tabs.forEach(t => {
+        t.classList.remove('bg-bark', 'border-bark', 'text-cream');
+        t.classList.add('bg-transparent', 'border-parchment', 'text-ink-soft');
+      });
+      tab.classList.add('bg-bark', 'border-bark', 'text-cream');
+      tab.classList.remove('bg-transparent', 'border-parchment', 'text-ink-soft');
+
+      panels.forEach(p => p.classList.add('hidden'));
+      document.querySelector(`[data-panel="${idx}"]`)?.classList.remove('hidden');
+    });
+  });
+</script>

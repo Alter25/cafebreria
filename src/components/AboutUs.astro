@@ -1,0 +1,77 @@
+---
+const values = [
+  { icon: "🌱", title: "Origen local",  desc: "Trabajamos con productores de Chiapas y Oaxaca que cultivan con amor y sin prisa." },
+  { icon: "🔥", title: "Tueste propio", desc: "Tostamos en pequeños lotes cada semana para garantizar frescura en cada gramo." },
+  { icon: "🍞", title: "Pan de la casa",desc: "Horneamos desde las 5am. Si llegas temprano, el aroma te guía desde la calle." },
+];
+---
+
+<section class="py-28 px-8 bg-cream-dark overflow-hidden" id="nosotros">
+  <div class="max-w-275 mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
+
+    <!-- Imágenes -->
+    <div class="relative h-140 max-md:h-95 reveal">
+
+      <!-- Principal -->
+      <div class="absolute top-0 left-0 w-4/5 h-[88%] rounded-xl overflow-hidden shadow-[0_16px_48px_rgba(62,42,20,0.22)]">
+        <img
+          src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800&q=80"
+          alt="Interior de La Leña"
+          loading="lazy"
+          class="w-full h-full object-cover hover:scale-[1.04] transition-transform duration-500"
+        />
+      </div>
+
+      <!-- Acento -->
+      <div class="absolute bottom-0 right-0 w-[46%] h-[44%] rounded-[10px] overflow-hidden
+                  border-4 border-cream-dark shadow-[0_10px_30px_rgba(62,42,20,0.22)]">
+        <img
+          src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=80"
+          alt="Preparando café"
+          loading="lazy"
+          class="w-full h-full object-cover"
+        />
+      </div>
+
+      <!-- Badge años -->
+      <div class="absolute top-6 right-0 bg-bark text-cream rounded-lg px-4 py-3 text-center
+                  shadow-[0_4px_16px_rgba(62,42,20,0.22)]">
+        <span class="block font-display text-[2rem] font-bold leading-none">14</span>
+        <span class="block font-ui text-[0.65rem] uppercase tracking-[0.08em] opacity-85">años sirviendo</span>
+      </div>
+    </div>
+
+    <!-- Texto -->
+    <div>
+      <p class="font-ui text-[0.78rem] font-semibold tracking-[0.18em] uppercase text-ember mb-3 reveal">
+        Quiénes somos
+      </p>
+      <h2 class="font-display text-[clamp(2rem,3.5vw,2.8rem)] font-bold leading-[1.15] text-bark-dark mb-6 reveal">
+        Una cocina con<br />
+        <em class="italic text-bark-light">raíces profundas</em>
+      </h2>
+      <p class="font-body text-ink-soft text-base mb-4 max-w-[52ch] reveal">
+        La Leña nació en 2010 de una idea sencilla: crear un lugar donde el café sea la excusa
+        para quedarse un rato más. Lo que comenzó como una pequeña barra en el barrio
+        antiguo creció hasta convertirse en el rincón favorito de muchos.
+      </p>
+      <p class="font-body text-ink-soft text-base mb-8 max-w-[52ch] reveal">
+        Cada pieza de madera en nuestro interior tiene historia. No hacemos las cosas rápido —
+        las hacemos bien.
+      </p>
+
+      <div class="flex flex-col gap-5">
+        {values.map((v, i) => (
+          <div class="flex gap-4 items-start reveal" style={`transition-delay: ${i * 0.12}s`}>
+            <span class="text-[1.4rem] shrink-0 mt-0.5">{v.icon}</span>
+            <div>
+              <h4 class="font-display text-base font-bold text-bark-dark mb-0.5">{v.title}</h4>
+              <p class="font-ui text-[0.88rem] text-ink-soft leading-snug">{v.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+  </div>
+</section>
