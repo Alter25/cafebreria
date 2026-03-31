@@ -33,10 +33,10 @@ const categories = [
 <section class="relative py-28 px-8 bg-cream overflow-hidden" id="menu">
 
   <!-- Deco blob -->
-  <div class="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full
+  <div class="absolute -top-20 -right-20 w-100 h-100 rounded-full
               bg-radial-[circle] from-parchment to-transparent pointer-events-none"></div>
 
-  <div class="max-w-[1100px] mx-auto">
+  <div class="max-w-275 mx-auto">
 
     <!-- Header -->
     <div class="text-center mb-12 reveal">
@@ -83,7 +83,7 @@ const categories = [
                       hover:shadow-[0_8px_30px_rgba(62,42,20,0.22)] hover:-translate-y-1
                       transition-all duration-200">
             {item.tag && (
-              <span class="font-ui text-[0.65rem] font-bold uppercase tracking-[0.1em]
+              <span class="font-ui text-[0.65rem] font-bold uppercase tracking-widest
                            bg-cream-dark text-bark px-3 py-1 rounded-full self-start">
                 {item.tag}
               </span>
@@ -101,7 +101,7 @@ const categories = [
     ))}
 
     <!-- Nota al pie -->
-    <div class="flex items-center justify-center gap-2 max-w-[560px] mx-auto mt-12
+    <div class="flex items-center justify-center gap-2 max-w-140 mx-auto mt-12
                 bg-cream-dark rounded-lg px-6 py-4 reveal">
       <span>🌿</span>
       <p class="font-ui text-[0.88rem] text-ink-soft">

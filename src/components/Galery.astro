@@ -31,8 +31,8 @@ const photos = [
         <div
           class:list={[
             "relative overflow-hidden rounded-[10px] cursor-pointer group",
-            photo.span === "tall" && "[grid-row:span_2]",
-            photo.span === "wide" && "[grid-column:span_2] max-sm:[grid-column:span_1]",
+            photo.span === "tall" && "row-span-2",
+            photo.span === "wide" && "col-span-2 max-sm:col-span-2",
           ]}
         >
           <img
@@ -42,7 +42,7 @@ const photos = [
             class="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500"
           />
           <!-- Hover overlay -->
-          <div class="absolute inset-0 bg-gradient-to-t from-bark-dark/70 to-transparent
+          <div class="absolute inset-0 bg-linear-to-t from-bark-dark/70 to-transparent
                       opacity-0 group-hover:opacity-100 transition-opacity duration-300
                       flex items-end p-4">
             <span class="font-ui text-[0.82rem] font-semibold text-white tracking-[0.04em]">
