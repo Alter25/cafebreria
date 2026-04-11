@@ -1,8 +1,8 @@
-
+import { cn } from "../../lib/utils";
 interface Props {
-  size: number;
+  className: string;
 }
 
-export default function ImagePlaceHolder({ size }: Props) {
-  return <div className={`w-${size} h-${size} border rounded-xl`}></div>
+export default function ImagePlaceHolder({ className }: Props) {
+  return <div className={cn(`border rounded-xl`, className)}></div>
 }
