@@ -1,12 +1,6 @@
 @import "tailwindcss";
 
-/*
-  @theme es la forma de Tailwind 4 de registrar design tokens.
-  Cada variable aquí se convierte automáticamente en una clase utilitaria:
-    --color-bark   →  bg-bark, text-bark, border-bark
-    --font-display →  font-display
-    --spacing-*    →  p-*, m-*, gap-*, etc.
-*/
+
 @theme {
   /* ── Colores ── */
   --color-cream:        #FAF5ED;
@@ -21,86 +15,20 @@
   --color-ink:          #2A1F14;
   --color-ink-soft:     #5C4A38;
   --color-espresso:     #1e130a;
+  --color-blue-mirage:  #738AB4;
+  --color-amber-smoke: #f2e0d0;
 
-  /* ── Tipografía ── */
+
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body:    'Lora', Georgia, serif;
   --font-ui:      'Source Sans 3', sans-serif;
 }
 
-/* ── Reset y base ── */
+
 @layer base {
   *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
   }
-
-  html {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    @apply bg-cream text-ink font-body text-[17px] leading-[1.7] overflow-x-hidden;
-  }
-
-  img {
-    display: block;
-    max-width: 100%;
-  }
-
-  ::selection {
-    @apply bg-bark text-cream;
-  }
-
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { @apply bg-cream-dark; }
-  ::-webkit-scrollbar-thumb { @apply bg-bark-light rounded-sm; }
-}
-
-/* ── Animaciones (no tienen equivalente en utilidades) ── */
-@layer utilities {
-  .animate-fade-up {
-    animation: fadeUp 0.8s ease both;
-  }
-  .animate-scale-in {
-    animation: scaleIn 0.6s ease both;
-  }
-  .animate-slow-zoom {
-    animation: slowZoom 18s ease-out forwards;
-  }
-  .animate-scroll-pulse {
-    animation: scrollPulse 2s ease-in-out infinite;
-  }
-
-  /* Reveal on scroll — clase base y estado visible */
-  .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(28px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.96); }
-  to   { opacity: 1; transform: scale(1); }
-}
-@keyframes slowZoom {
-  to { transform: scale(1); }
-}
-@keyframes scrollPulse {
-  0%, 100% { opacity: 0.3; transform: scaleY(0.6); transform-origin: top; }
-  50%       { opacity: 1;   transform: scaleY(1); }
 }
