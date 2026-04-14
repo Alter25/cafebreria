@@ -16,6 +16,7 @@ export default function AdminPage() {
     const { data, error } = await supabase
       .from('products')
       .select('*')
+      .order('created_at', { ascending: false })
     if (!error && data) {
       setProductos(data);
     }
@@ -28,7 +29,13 @@ export default function AdminPage() {
 
   return <div className="bg-blue-mirage max-w-full h-screen flex flex-col items-start">
     <h1 className="text-3xl mx-auto my-2">Administrar</h1>
-    <DisplayCard />
+    <div className='w-full'>
+      {productos &&
+        productos.map(p => (
+          <DisplayCard key={p.id} product={p} />
+        ))
+      }
+    </div>
     <ProductForm onSave={onSave} producto={{} as Product} />
   </div>
 }

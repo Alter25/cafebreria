@@ -5,8 +5,8 @@ export interface Product{
   isActive: boolean;
   description: string | null;
   img_url?: string | null;
-  feature_order: number;
+  created_at: string;
 }
 
-export type ProductInsert = Omit<Product, 'id'>;
+export type ProductInsert = Omit<Product, 'id' | 'created_at' >;
 export type ProductUpdate = Partial<ProductInsert>;
