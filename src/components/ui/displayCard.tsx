@@ -36,8 +36,8 @@ export default function DisplayCard({ product }: Props) {
           <div className="italic flex-1">{product.description}</div>
           <div className="mb-4">$<span className="text-lg">{product.price}</span> Mxn.</div>
         </div>
-        <div className="flex justify-end">
-          <ImagePlaceHolder className="rounded-xl w-40 h-30" >
+        <div className="w-fit flex items-center justify-center">
+          <ImagePlaceHolder className="rounded-xl h-36" >
             {
               product.img_url &&
               <img src={product.img_url} alt="image" className="object-cover w-fit h-full rounded-xl border" />
