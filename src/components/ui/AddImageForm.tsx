@@ -4,27 +4,50 @@ import { supabase } from '../../lib/supabase';
 
 const SPAN_OPTIONS: { label: string; value: GallerySpan }[] = [
   { label: 'Normal', value: '' },
-  { label: 'Alto', value: 'tall' },
-  { label: 'Ancho', value: 'wide' },
+  { label: 'Alto',   value: 'tall' },
+  { label: 'Ancho',  value: 'wide' },
 ];
+
+export type ObjectPosition =
+  | 'top left' | 'top' | 'top right'
+  | 'left'     | 'center' | 'right'
+  | 'bottom left' | 'bottom' | 'bottom right';
+
+const POSITIONS: { value: ObjectPosition; cls: string }[] = [
+  { value: 'top left',     cls: 'object-left-top'    },
+  { value: 'top',          cls: 'object-top'          },
+  { value: 'top right',    cls: 'object-right-top'   },
+  { value: 'left',         cls: 'object-left'        },
+  { value: 'center',       cls: 'object-center'      },
+  { value: 'right',        cls: 'object-right'       },
+  { value: 'bottom left',  cls: 'object-left-bottom' },
+  { value: 'bottom',       cls: 'object-bottom'      },
+  { value: 'bottom right', cls: 'object-right-bottom'},
+];
+
+export function positionClass(pos?: string | null): string {
+  return POSITIONS.find(p => p.value === pos)?.cls ?? 'object-center';
+}
 
 interface Props {
   onAdd: (image: GalleryImage) => void;
 }
 
 export default function AddImageForm({ onAdd }: Props) {
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [alt, setAlt] = useState('');
-  const [span, setSpan] = useState<GallerySpan>('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [file, setFile]           = useState<File | null>(null);
+  const [preview, setPreview]     = useState<string | null>(null);
+  const [alt, setAlt]             = useState('');
+  const [span, setSpan]           = useState<GallerySpan>('');
+  const [objectPos, setObjectPos] = useState<ObjectPosition>('center');
+  const [loading, setLoading]     = useState(false);
+  const [error, setError]         = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] ?? null;
     setFile(selected);
     setPreview(selected ? URL.createObjectURL(selected) : null);
+    setObjectPos('center');
     setError(null);
   };
 
@@ -33,6 +56,7 @@ export default function AddImageForm({ onAdd }: Props) {
     setPreview(null);
     setAlt('');
     setSpan('');
+    setObjectPos('center');
     setError(null);
     if (inputRef.current) inputRef.current.value = '';
   };
@@ -58,7 +82,7 @@ export default function AddImageForm({ onAdd }: Props) {
     const { data: urlData } = supabase.storage.from('gallery').getPublicUrl(filename);
     const src = urlData.publicUrl;
 
-    const insert: GalleryImageInsert = { src, alt: alt.trim(), span };
+    const insert: GalleryImageInsert = { src, alt: alt.trim(), span, object_position: objectPos };
     const { data, error: insertError } = await supabase
       .from('gallery_images')
       .insert([insert])
@@ -74,6 +98,8 @@ export default function AddImageForm({ onAdd }: Props) {
     setLoading(false);
   };
 
+  const currentCls = positionClass(objectPos);
+
   return (
     <div className="bg-white/5 rounded-xl p-4 flex flex-col gap-3">
       <h2 className="text-sm font-semibold uppercase tracking-widest text-white/50">
@@ -88,7 +114,7 @@ export default function AddImageForm({ onAdd }: Props) {
           className="shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-white/10 flex items-center justify-center hover:bg-white/15 transition-colors cursor-pointer"
         >
           {preview
-            ? <img src={preview} alt="preview" className="w-full h-full object-cover" />
+            ? <img src={preview} alt="preview" className={`w-full h-full object-cover ${currentCls}`} />
             : <span className="text-white/30 text-xs text-center px-2 leading-tight">
                 Seleccionar<br />imagen
               </span>
@@ -128,6 +154,28 @@ export default function AddImageForm({ onAdd }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Focal point picker — solo cuando hay imagen */}
+      {preview && (
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-white/40 shrink-0">Encuadre</span>
+          <div className="grid grid-cols-3 gap-1">
+            {POSITIONS.map(pos => (
+              <button
+                key={pos.value}
+                type="button"
+                title={pos.value}
+                onClick={() => setObjectPos(pos.value)}
+                className={`w-5 h-5 rounded-sm transition-colors
+                  ${objectPos === pos.value
+                    ? 'bg-white/80 ring-1 ring-white'
+                    : 'bg-white/15 hover:bg-white/35'
+                  }`}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {error && (
         <p className="text-red-400 text-xs">{error}</p>

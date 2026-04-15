@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { GalleryImage } from '../types/types';
 import { supabase } from '../lib/supabase';
-import AddImageForm from './ui/AddImageForm';
+import AddImageForm, { positionClass } from './ui/AddImageForm';
 
 export default function GalleryAdmin() {
   const [images, setImages] = useState<GalleryImage[]>([]);
@@ -44,7 +44,7 @@ export default function GalleryAdmin() {
             className="flex items-center gap-3 bg-white/5 rounded-xl px-3 py-2"
           >
             <div className="shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-white/10">
-              <img src={img.src} alt={img.alt} className="w-full h-full object-cover" />
+              <img src={img.src} alt={img.alt} className={`w-full h-full object-cover ${positionClass(img.object_position)}`} />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-white truncate">{img.alt}</p>

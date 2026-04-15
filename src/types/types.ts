@@ -19,6 +19,7 @@ export interface GalleryImage {
   src: string;
   alt: string;
   span: GallerySpan;
+  object_position?: string | null;
   created_at: string;
 }
 export type GalleryImageInsert = Omit<GalleryImage, 'id' | 'created_at'>;

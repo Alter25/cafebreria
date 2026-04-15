@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { GalleryImage } from '../types/types';
 import { supabase } from '../lib/supabase';
+import { positionClass } from './ui/AddImageForm';
 
 export default function GallerySection() {
   const [photos, setPhotos] = useState<GalleryImage[]>([]);
@@ -32,7 +33,7 @@ export default function GallerySection() {
             loading="lazy"
             width="800"
             height="600"
-            className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500"
+            className={`w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500 ${positionClass(photo.object_position)}`}
           />
           <div className="absolute inset-0 bg-linear-to-t from-bark-dark/70 to-transparent
                           opacity-0 group-hover:opacity-100 transition-opacity duration-300
