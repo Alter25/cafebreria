@@ -1,3 +1,4 @@
+type Category = 'bebida' | 'comida' | 'lectura';
 export interface Product{
   id: number;
   name: string;
@@ -5,6 +6,7 @@ export interface Product{
   isActive: boolean;
   description: string | null;
   img_url?: string | null;
+  category: Category;
   created_at: string;
 }
 

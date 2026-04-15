@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react"
 import type { Product, ProductInsert } from "../types/types"
 import Switch from "./ui/Switch";
-import { Plus, X, Upload } from "lucide-react";
+import { X, Upload } from "lucide-react";
 import ImagePlaceHolder from "./ui/ImagePlaceHolder";
 
 interface Props {
@@ -14,6 +14,7 @@ const emptyProduct: ProductInsert = {
   price: 0,
   isActive: false,
   description: "",
+  category: "bebida",
   img_url: null,
 }
 

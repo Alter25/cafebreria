@@ -1,33 +1,36 @@
 ---
-const categories = [
-  {
-    label: "Café",
-    items: [
-      { name: "Espresso La Tinta Cafebrería",   desc: "Blend de origen único, notas de cacao y caramelo tostado.", price: "$45", tag: "Favorito" },
-      { name: "Latte de Piloncillo", desc: "Espresso doble con leche vaporizada y piloncillo artesanal.", price: "$65", tag: "" },
-      { name: "Cold Brew 18h",       desc: "Extracción lenta en frío, suave y aterciopelado. Sin azúcar.", price: "$70", tag: "Nuevo" },
-      { name: "Café de Olla",        desc: "Receta tradicional con canela y cáscara de naranja.", price: "$40", tag: "" },
-    ]
-  },
-  {
-    label: "Cocina",
-    items: [
-      { name: "Tostada de Aguacate", desc: "Pan masa madre, aguacate, jitomate heirloom y chile serrano.", price: "$95",  tag: "Popular" },
-      { name: "Huevos Rancheros",    desc: "Tortillas de maíz, salsa roja ahumada y queso Oaxaca.", price: "$110", tag: "" },
-      { name: "Bowl de Granola",     desc: "Granola artesanal, yogurt griego, miel de abeja y frutas de temporada.", price: "$85", tag: "" },
-      { name: "Pan Francés Brioche", desc: "Pan brioche de la casa, cajeta, nuez y crema batida.", price: "$90",  tag: "" },
-    ]
-  },
-  {
-    label: "Panadería",
-    items: [
-      { name: "Croissant de Mantequilla", desc: "Hojaldrado, 72 horas de fermentación en frío.", price: "$55", tag: "Hecho aquí" },
-      { name: "Scone de Naranja",         desc: "Con glaseado de cítricos y cardamomo.", price: "$50", tag: "" },
-      { name: "Concha de Vainilla",       desc: "Pan de tradición mexicana, esponjoso con costra dulce.", price: "$35", tag: "" },
-      { name: "Brownie Fundido",          desc: "Chocolate obscuro 70%, nuez y flor de sal.", price: "$60", tag: "" },
-    ]
-  }
-];
+// const categories = [
+//   {
+//     label: "Café",
+//     items: [
+//       { name: "Espresso La Tinta Cafebrería",   desc: "Blend de origen único, notas de cacao y caramelo tostado.", price: "$45", tag: "Favorito" },
+//       { name: "Latte de Piloncillo", desc: "Espresso doble con leche vaporizada y piloncillo artesanal.", price: "$65", tag: "" },
+//       { name: "Cold Brew 18h",       desc: "Extracción lenta en frío, suave y aterciopelado. Sin azúcar.", price: "$70", tag: "Nuevo" },
+//       { name: "Café de Olla",        desc: "Receta tradicional con canela y cáscara de naranja.", price: "$40", tag: "" },
+//     ]
+//   },
+//   {
+//     label: "Cocina",
+//     items: [
+//       { name: "Tostada de Aguacate", desc: "Pan masa madre, aguacate, jitomate heirloom y chile serrano.", price: "$95",  tag: "Popular" },
+//       { name: "Huevos Rancheros",    desc: "Tortillas de maíz, salsa roja ahumada y queso Oaxaca.", price: "$110", tag: "" },
+//       { name: "Bowl de Granola",     desc: "Granola artesanal, yogurt griego, miel de abeja y frutas de temporada.", price: "$85", tag: "" },
+//       { name: "Pan Francés Brioche", desc: "Pan brioche de la casa, cajeta, nuez y crema batida.", price: "$90",  tag: "" },
+//     ]
+//   },
+//   {
+//     label: "Panadería",
+//     items: [
+//       { name: "Croissant de Mantequilla", desc: "Hojaldrado, 72 horas de fermentación en frío.", price: "$55", tag: "Hecho aquí" },
+//       { name: "Scone de Naranja",         desc: "Con glaseado de cítricos y cardamomo.", price: "$50", tag: "" },
+//       { name: "Concha de Vainilla",       desc: "Pan de tradición mexicana, esponjoso con costra dulce.", price: "$35", tag: "" },
+//       { name: "Brownie Fundido",          desc: "Chocolate obscuro 70%, nuez y flor de sal.", price: "$60", tag: "" },
+//     ]
+//   }
+// ];
+import {supabase} from "../lib/supabase.js";
+const { data } = await supabase.from('products').select('*');
+console.log(data);
 ---
 
 <section class="relative py-28 px-8 bg-cream overflow-hidden" id="menu">

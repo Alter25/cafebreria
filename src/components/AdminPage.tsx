@@ -27,7 +27,7 @@ export default function AdminPage() {
     fetch();
   }, [])
 
-  return <div className="bg-blue-mirage max-w-full h-screen flex flex-col items-start">
+  return <div className="bg-blue-mirage max-w-full flex flex-col items-start">
     <h1 className="text-3xl mx-auto my-2">Administrar</h1>
     <div className='w-full'>
       {productos &&
