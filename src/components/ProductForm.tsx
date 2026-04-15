@@ -12,7 +12,7 @@ interface Props {
 const emptyProduct: ProductInsert = {
   name: "",
   price: 0,
-  isActive: false,
+  is_active: false,
   description: "",
   category: "bebida",
   img_url: null,
@@ -56,10 +56,10 @@ export default function ProductForm({ producto }: Props) {
   }
 
   const handleActive = () => {
-    const active = form.isActive;
+    const active = form.is_active;
     setForm((prev) => ({
       ...prev,
-      isActive: !active,
+      is_active: !active,
     }))
   }
 
@@ -104,7 +104,7 @@ export default function ProductForm({ producto }: Props) {
             </div>
             <div className="translate-y-2.5">
               <span className="mx-2">Activo: </span>
-              <Switch defaultChecked={form.isActive} onChange={() => handleActive()} />
+              <Switch defaultChecked={form.is_active} onChange={() => handleActive()} />
             </div>
           </div>
           <div className="w-full mt-4">

@@ -2,6 +2,7 @@ import type { Product } from "../../types/types";
 import SwitchIcon from "./SwitchIcon";
 import Switch from "./Switch";
 import { useState } from "react";
+import { supabase } from "../../lib/supabase";
 
 interface Props {
   product: Product;
@@ -9,6 +10,10 @@ interface Props {
 
 export default function DisplayCard({ product }: Props) {
   const [expanded, setExpanded] = useState(false);
+
+  const handleActiveChange = async (checked: boolean) => {
+    await supabase.from('products').update({ is_active: checked }).eq('id', product.id);
+  };
 
   return (
     <div className="bg-white/5 rounded-xl mx-4 my-1 overflow-hidden">
@@ -42,7 +47,7 @@ export default function DisplayCard({ product }: Props) {
         {/* Activo */}
         <div className="flex items-center gap-1 shrink-0">
           <span className="text-xs text-white/40">Activo</span>
-          <Switch />
+          <Switch defaultChecked={product.is_active} onChange={handleActiveChange} />
         </div>
 
         {/* Expandir */}

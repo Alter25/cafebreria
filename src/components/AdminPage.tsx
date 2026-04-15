@@ -4,6 +4,7 @@ import "../styles/global.css";
 import DisplayCard from "../components/ui/displayCard";
 import ProductForm from "./ProductForm";
 import GalleryAdmin from "./GalleryAdmin";
+import LoginForm from "./LoginForm";
 import { supabase } from '../lib/supabase';
 
 type Section = 'productos' | 'galeria';
@@ -16,9 +17,16 @@ const CATEGORIES: { label: string; value: Category | 'todas' }[] = [
 ];
 
 export default function AdminPage() {
+  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
   const [productos, setProductos] = useState<Product[] | null>();
   const [categoria, setCategoria] = useState<Category | 'todas'>('todas');
   const [section, setSection] = useState<Section>('productos');
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setAuthenticated(!!data.session);
+    });
+  }, []);
 
   const onSave = () => { fetchProducts(); };
 
@@ -30,7 +38,20 @@ export default function AdminPage() {
     if (!error && data) setProductos(data);
   };
 
-  useEffect(() => { fetchProducts(); }, []);
+  useEffect(() => { if (authenticated) fetchProducts(); }, [authenticated]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setAuthenticated(false);
+  };
+
+  if (authenticated === null) return (
+    <div className="min-h-screen bg-blue-mirage flex items-center justify-center">
+      <span className="text-white/30 text-sm">Cargando…</span>
+    </div>
+  );
+
+  if (!authenticated) return <LoginForm onLogin={() => setAuthenticated(true)} />;
 
   const productosFiltrados = productos?.filter(
     p => categoria === 'todas' || p.category === categoria
@@ -84,6 +105,22 @@ export default function AdminPage() {
             </nav>
           </>
         )}
+
+        {/* Fondo + cerrar sesión */}
+        <div className="mt-auto mx-2 mb-4 flex flex-col gap-1">
+          <a
+            href="/"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-white/50 hover:bg-white/10 hover:text-white transition-colors"
+          >
+            ← Inicio
+          </a>
+          <button
+            onClick={handleSignOut}
+            className="text-left px-3 py-2 rounded-lg text-sm text-white/50 hover:bg-white/10 hover:text-red-400 transition-colors"
+          >
+            Cerrar sesión
+          </button>
+        </div>
       </aside>
 
       {/* Contenido principal */}

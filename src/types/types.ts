@@ -3,7 +3,7 @@ export interface Product{
   id: number;
   name: string;
   price: number;
-  isActive: boolean;
+  is_active: boolean;
   description: string | null;
   img_url?: string | null;
   category: Category;

@@ -30,6 +30,8 @@ export default function GallerySection() {
             src={photo.src}
             alt={photo.alt}
             loading="lazy"
+            width="800"
+            height="600"
             className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500"
           />
           <div className="absolute inset-0 bg-linear-to-t from-bark-dark/70 to-transparent

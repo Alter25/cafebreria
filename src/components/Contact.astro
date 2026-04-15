@@ -10,12 +10,12 @@ const info = [
 <section class="relative py-28 px-8 bg-[#1a1412] overflow-hidden" id="contacto">
   <div class="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-orange-600 via-stone-400 to-orange-600"></div>
 
-  <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-    
+  <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+
     <div>
-      <p class="text-xs font-semibold tracking-widest uppercase text-white/60 mb-3">Encuéntranos</p>
+      <p class="text-xs font-semibold tracking-widest uppercase text-white/70 mb-3">Encuéntranos</p>
       <h2 class="text-4xl font-bold text-white mb-3">Ven a visitarnos</h2>
-      <p class="text-white/75 mb-8">
+      <p class="text-white/80 mb-8">
         Siempre hay un lugar disponible y una taza lista.<br />
         Si quieres reservar para grupos, escríbenos.
       </p>
@@ -23,9 +23,9 @@ const info = [
       <div class="flex flex-col gap-5 mb-8">
         {info.map((item) => (
           <div class="flex gap-3 items-start">
-            <span class="text-xl">{item.icon}</span>
+            <span class="text-xl" aria-hidden="true">{item.icon}</span>
             <div>
-              <p class="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-0.5">{item.label}</p>
+              <p class="text-xs font-bold uppercase tracking-widest text-white/60 mb-0.5">{item.label}</p>
               <p class="text-sm text-white whitespace-pre-line">{item.value}</p>
             </div>
           </div>
@@ -33,50 +33,69 @@ const info = [
       </div>
 
       <div class="flex gap-3">
-        <a href="https://www.instagram.com/latintacafebreria" class="flex items-center justify-center w-10 h-10 rounded-full border border-white/20 text-white hover:bg-orange-700 transition-all">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+        <a
+          href="https://www.instagram.com/latintacafebreria"
+          aria-label="Instagram de La Tinta Cafebrería"
+          class="flex items-center justify-center w-11 h-11 rounded-full border border-white/20 text-white hover:bg-orange-700 transition-all"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
+            <rect x="2" y="2" width="20" height="20" rx="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+          </svg>
         </a>
-        <a href="https://www.facebook.com/latintacafebreria/" class="flex items-center justify-center w-10 h-10 rounded-full border border-white/20 text-white hover:bg-orange-700 transition-all">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.04c-5.5 0-10 4.49-10 10.02c0 5 3.66 9.15 8.44 9.9v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89c1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.45 2.9h-2.33v7a10 10 0 0 0 8.44-9.9c0-5.53-4.5-10.02-10-10.02"/></svg>
+        <a
+          href="https://www.facebook.com/latintacafebreria/"
+          aria-label="Facebook de La Tinta Cafebrería"
+          class="flex items-center justify-center w-11 h-11 rounded-full border border-white/20 text-white hover:bg-orange-700 transition-all"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path fill="currentColor" d="M12 2.04c-5.5 0-10 4.49-10 10.02c0 5 3.66 9.15 8.44 9.9v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89c1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.45 2.9h-2.33v7a10 10 0 0 0 8.44-9.9c0-5.53-4.5-10.02-10-10.02"/>
+          </svg>
         </a>
-        </div>
+      </div>
     </div>
 
-    <form id="reserva-form" class="flex flex-col gap-4">
+    <form id="reserva-form" class="flex flex-col gap-4" novalidate>
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold uppercase tracking-widest text-white/50">Nombre</label>
+        <label for="nombre" class="text-xs font-bold uppercase tracking-widest text-white/70">Nombre</label>
         <input
           type="text"
           id="nombre"
+          name="nombre"
+          autocomplete="name"
           placeholder="Tu nombre"
-          class="bg-white/10 border border-white/10 rounded-md px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-orange-600 transition-colors"
+          class="bg-white/10 border border-white/10 rounded-md px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-orange-600 transition-colors"
         />
       </div>
 
       <div class="flex gap-3">
         <div class="flex flex-col gap-1 flex-1">
-          <label class="text-xs font-bold uppercase tracking-widest text-white/50">Fecha</label>
+          <label for="fecha" class="text-xs font-bold uppercase tracking-widest text-white/70">Fecha</label>
           <input
             type="date"
             id="fecha"
-            class="bg-white/10 border border-white/10 rounded-md px-4 py-2.5 text-sm text-white outline-none focus:border-orange-600 transition-colors"
+            name="fecha"
+            class="bg-white/10 border border-white/10 rounded-md px-4 py-3 text-sm text-white outline-none focus:border-orange-600 transition-colors"
           />
         </div>
         <div class="flex flex-col gap-1 flex-1">
-          <label class="text-xs font-bold uppercase tracking-widest text-white/50">Hora</label>
+          <label for="hora" class="text-xs font-bold uppercase tracking-widest text-white/70">Hora</label>
           <input
             type="time"
             id="hora"
-            class="bg-white/10 border border-white/10 rounded-md px-4 py-2.5 text-sm text-white outline-none focus:border-orange-600 transition-colors"
+            name="hora"
+            class="bg-white/10 border border-white/10 rounded-md px-4 py-3 text-sm text-white outline-none focus:border-orange-600 transition-colors"
           />
         </div>
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold uppercase tracking-widest text-white/50">Número de personas</label>
+        <label for="personas" class="text-xs font-bold uppercase tracking-widest text-white/70">Número de personas</label>
         <select
           id="personas"
-          class="bg-white/10 border border-white/10 rounded-md px-4 py-2.5 text-sm text-white outline-none focus:border-orange-600 transition-colors"
+          name="personas"
+          class="bg-white/10 border border-white/10 rounded-md px-4 py-3 text-sm text-white outline-none focus:border-orange-600 transition-colors"
         >
           <option value="" class="bg-[#1a1412]">Selecciona</option>
           <option value="1" class="bg-[#1a1412]">1 persona</option>
@@ -89,11 +108,12 @@ const info = [
 
       <button
         type="submit"
-        class="w-full bg-orange-700 text-white py-3 rounded-md font-bold hover:bg-orange-600 transition-all mt-2"
+        class="w-full bg-orange-700 text-white py-3.5 rounded-md font-bold hover:bg-orange-600 transition-all mt-2 min-h-11"
       >
         Reservar por WhatsApp
       </button>
     </form>
+  </div>
 </section>
 
 <script>
@@ -102,9 +122,9 @@ const info = [
   form?.addEventListener('submit', (e) => {
     e.preventDefault()
 
-    const nombre = (document.getElementById('nombre') as HTMLInputElement).value.trim()
-    const fecha = (document.getElementById('fecha') as HTMLInputElement).value
-    const hora = (document.getElementById('hora') as HTMLInputElement).value
+    const nombre  = (document.getElementById('nombre')   as HTMLInputElement).value.trim()
+    const fecha   = (document.getElementById('fecha')    as HTMLInputElement).value
+    const hora    = (document.getElementById('hora')     as HTMLInputElement).value
     const personas = (document.getElementById('personas') as HTMLSelectElement).value
 
     if (!nombre || !fecha || !hora || !personas) {
@@ -113,10 +133,7 @@ const info = [
     }
 
     const mensaje = `Hola! Quisiera reservar una mesa 🍵\n\n👤 Nombre: ${nombre}\n📅 Fecha: ${fecha}\n🕐 Hora: ${hora}\n👥 Personas: ${personas}\n\n¡Gracias!`
-
-    const telefono = '528713564742'
-    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`
-
+    const url = `https://wa.me/528713564742?text=${encodeURIComponent(mensaje)}`
     window.open(url, '_blank')
   })
 </script>
