@@ -1,50 +1,73 @@
 import type { Product } from "../../types/types";
 import SwitchIcon from "./SwitchIcon";
-import ImagePlaceHolder from "./ImagePlaceHolder";
 import Switch from "./Switch";
-
 import { useState } from "react";
+
 interface Props {
   product: Product;
 }
 
 export default function DisplayCard({ product }: Props) {
+  const [expanded, setExpanded] = useState(false);
 
-  const [showContent, setShowContent] = useState(false);
+  return (
+    <div className="bg-white/5 rounded-xl mx-4 my-1 overflow-hidden">
 
-  return <div className="bg-amber-smoke min-w-[80%] px-4 py-1 mx-4 my-1 border font-serif font-semibold rounded-xl">
-    <div className="flex min-h-12 items-center">
-      <div className="mx-2 basis-1/2">
-        <h1 className='text-xl font-semibold tracking-wider capitalize'>{product.name}</h1>
-      </div>
-      {!showContent && <div>$<span className="text-lg">{product.price}</span> Mxn.</div>
+      {/* Fila principal */}
+      <div className="flex items-center gap-3 px-3 py-2">
 
-      }
-      <div className="mx-8 flex items-center">
-        <span>Activo:</span>
-        <span className="">
+        {/* Thumbnail */}
+        <div className="shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-white/10">
+          {product.img_url
+            ? <img src={product.img_url} alt={product.name} className="w-full h-full object-cover" />
+            : <div className="w-full h-full" />
+          }
+        </div>
+
+        {/* Nombre + categoría */}
+        <div className="flex-1 min-w-0">
+          <p className="text-sm text-white truncate capitalize">{product.name}</p>
+          <span className="text-xs text-white/40 bg-white/10 rounded px-1.5 py-0.5">
+            {product.category}
+          </span>
+        </div>
+
+        {/* Precio */}
+        {!expanded && (
+          <span className="text-sm text-white/70 shrink-0">
+            ${product.price}
+          </span>
+        )}
+
+        {/* Activo */}
+        <div className="flex items-center gap-1 shrink-0">
+          <span className="text-xs text-white/40">Activo</span>
           <Switch />
-        </span>
+        </div>
+
+        {/* Expandir */}
+        <button
+          onClick={() => setExpanded(v => !v)}
+          className="shrink-0 text-white/30 hover:text-white transition-colors"
+        >
+          <SwitchIcon size={20} className="border border-white/20 rounded-full p-1" isShowing={expanded} />
+        </button>
       </div>
-      <div className="ml-auto">
-        <button onClick={() => setShowContent(!showContent)}><SwitchIcon size={20} className="border rounded-full p-1" isShowing={showContent} /></button>
-      </div>
+
+      {/* Detalle expandido */}
+      {expanded && (
+        <div className="border-t border-white/10 px-3 py-3 flex gap-3">
+          <div className="flex-1 flex flex-col gap-1 min-w-0">
+            <p className="text-xs text-white/40 italic">{product.description ?? '—'}</p>
+            <span className="text-sm text-white/70 mt-1">${product.price} Mxn</span>
+          </div>
+          {product.img_url && (
+            <div className="shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-white/10">
+              <img src={product.img_url} alt={product.name} className="w-full h-full object-cover" />
+            </div>
+          )}
+        </div>
+      )}
     </div>
-    {showContent &&
-      <div className="min-h-8 p-2 border-t flex justify-between">
-        <div className="basis-2/3 ml-2 flex flex-col">
-          <div className="italic flex-1">{product.description}</div>
-          <div className="mb-4">$<span className="text-lg">{product.price}</span> Mxn.</div>
-        </div>
-        <div className="w-fit flex items-center justify-center">
-          <ImagePlaceHolder className="rounded-xl h-36" >
-            {
-              product.img_url &&
-              <img src={product.img_url} alt="image" className="object-cover w-fit h-full rounded-xl border" />
-            }
-          </ImagePlaceHolder>
-        </div>
-      </div>
-    }
-  </div>
+  );
 }

@@ -12,3 +12,13 @@ export interface Product{
 
 export type ProductInsert = Omit<Product, 'id' | 'created_at' >;
 export type ProductUpdate = Partial<ProductInsert>;
+
+export type GallerySpan = 'tall' | 'wide' | '';
+export interface GalleryImage {
+  id: number;
+  src: string;
+  alt: string;
+  span: GallerySpan;
+  created_at: string;
+}
+export type GalleryImageInsert = Omit<GalleryImage, 'id' | 'created_at'>;
