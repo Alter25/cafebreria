@@ -10,7 +10,7 @@ interface Props {
 
 export default function DisplayCard({ product }: Props) {
 
-  const [showContent, setShowContent] = useState(true);
+  const [showContent, setShowContent] = useState(false);
 
   return <div className="bg-amber-smoke min-w-[80%] px-4 py-1 mx-4 my-1 border font-serif font-semibold rounded-xl">
     <div className="flex min-h-12 items-center">

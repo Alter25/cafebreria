@@ -27,9 +27,9 @@ export default function AdminPage() {
     fetch();
   }, [])
 
-  return <div className="bg-blue-mirage max-w-full flex flex-col items-start">
+  return <div className="bg-blue-mirage max-w-full flex flex-col items-start h-fit no-scrollbar">
     <h1 className="text-3xl mx-auto my-2">Administrar</h1>
-    <div className='w-full'>
+    <div className='w-full pb-80 no-scrollbar'>
       {productos &&
         productos.map(p => (
           <DisplayCard key={p.id} product={p} />

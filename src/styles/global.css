@@ -31,4 +31,24 @@
     margin: 0;
     padding: 0;
   }
+
+  html, body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
+  }
+}
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE y Edge antiguo */
+    scrollbar-width: none;     /* Firefox */
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari y Opera */
+  }
 }

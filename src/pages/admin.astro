@@ -1,6 +1,18 @@
 ---
-//this is for the admin page, which will be used to manage the website
 import AdminPage from '../components/AdminPage'
+import '../styles/global.css'
 ---
-<AdminPage client:only="react"/>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — La Tinta Cafebrería</title>
+</head>
+<body>
+  <div class="no-scrollbar">
+    <AdminPage client:load />
+  </div>
+</body>
+</html>
 
