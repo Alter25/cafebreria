@@ -1,4 +1,4 @@
-type Category = 'bebida' | 'comida' | 'lectura';
+export type Category = 'bebida' | 'comida' | 'lectura';
 export interface Product{
   id: number;
   name: string;
