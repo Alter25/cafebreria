@@ -16,7 +16,7 @@ export default function DisplayCard({ product }: Props) {
   };
 
   return (
-    <div className="bg-white/5 rounded-xl mx-4 my-1 overflow-hidden">
+    <div className="bg-white/5 rounded-xl overflow-hidden">
 
       {/* Fila principal */}
       <div className="flex items-center gap-3 px-3 py-2">
