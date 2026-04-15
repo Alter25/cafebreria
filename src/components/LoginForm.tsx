@@ -27,7 +27,13 @@ export default function LoginForm({ onLogin }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-blue-mirage flex items-center justify-center px-4">
+    <div className="min-h-screen bg-blue-mirage flex flex-col items-center justify-center px-4">
+      <a
+        href="/"
+        className="mb-6 text-sm text-white/40 hover:text-white/70 transition-colors self-start max-w-sm w-full"
+      >
+        ← Volver al inicio
+      </a>
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-sm flex flex-col gap-4 bg-white/5 rounded-2xl p-8"
