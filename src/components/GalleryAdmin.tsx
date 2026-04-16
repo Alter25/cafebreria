@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import type { GalleryImage } from '../types/types';
 import { supabase } from '../lib/supabase';
-import AddImageForm, { positionClass } from './ui/AddImageForm';
+import AddImageForm from './ui/AddImageForm';
+import { positionClass } from '../lib/imagePosition';
 
 export default function GalleryAdmin() {
   const [images, setImages] = useState<GalleryImage[]>([]);
@@ -55,6 +56,7 @@ export default function GalleryAdmin() {
               )}
             </div>
             <button
+              type="button"
               onClick={() => handleDelete(img.id)}
               className="text-white/30 hover:text-red-400 transition-colors text-lg leading-none shrink-0"
               title="Eliminar"

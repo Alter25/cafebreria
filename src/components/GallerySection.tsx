@@ -1,20 +1,36 @@
 import { useState, useEffect } from 'react';
 import type { GalleryImage } from '../types/types';
 import { supabase } from '../lib/supabase';
-import { positionClass } from './ui/AddImageForm';
+import { positionClass } from '../lib/imagePosition';
 
 export default function GallerySection() {
-  const [photos, setPhotos] = useState<GalleryImage[]>([]);
+  const [photos, setPhotos]   = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState<string | null>(null);
 
   useEffect(() => {
     supabase
       .from('gallery_images')
-      .select('*')
+      .select('id, src, alt, span, object_position, created_at')
       .order('created_at', { ascending: false })
-      .then(({ data }) => { if (data) setPhotos(data); });
+      .then(({ data, error }) => {
+        if (error) setError(error.message);
+        else if (data) setPhotos(data);
+        setLoading(false);
+      });
   }, []);
 
-  if (photos.length === 0) return null;
+  if (loading) return (
+    <div className="text-center py-12 text-bark-dark/30 text-sm">Cargando galería…</div>
+  );
+
+  if (error) return (
+    <div className="text-center py-12 text-red-400 text-sm">Error: {error}</div>
+  );
+
+  if (photos.length === 0) return (
+    <div className="text-center py-12 text-bark-dark/30 text-sm italic">Sin imágenes aún.</div>
+  );
 
   return (
     <div className="grid grid-cols-3 max-sm:grid-cols-2 auto-rows-[220px] max-sm:auto-rows-[150px] gap-3">
@@ -24,7 +40,7 @@ export default function GallerySection() {
           className={[
             'relative overflow-hidden rounded-[10px] cursor-pointer group',
             photo.span === 'tall' ? 'row-span-2' : '',
-            photo.span === 'wide' ? 'col-span-2 max-sm:col-span-2' : '',
+            photo.span === 'wide' ? 'col-span-2' : '',
           ].filter(Boolean).join(' ')}
         >
           <img
