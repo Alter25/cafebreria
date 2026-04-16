@@ -22,11 +22,9 @@ export default function GalleryAdmin() {
   };
 
   const handleDelete = async (id: number) => {
+    if (!confirm('¿Eliminar esta imagen?')) return;
     const { error } = await supabase.from('gallery_images').delete().eq('id', id);
-    if (error) {
-      alert('Error al eliminar: ' + error.message);
-      return;
-    }
+    if (error) { alert('Error al eliminar: ' + error.message); return; }
     setImages(prev => prev.filter(img => img.id !== id));
   };
 

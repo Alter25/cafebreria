@@ -4,6 +4,7 @@ export interface Product{
   name: string;
   price: number;
   is_active: boolean;
+  is_recommended: boolean;
   description: string | null;
   img_url?: string | null;
   category: Category;

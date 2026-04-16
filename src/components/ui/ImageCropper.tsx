@@ -2,9 +2,23 @@ import { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
 import type { Area } from 'react-easy-crop';
 
+export interface AspectOption {
+  label: string;
+  value: number;
+}
+
+export const ASPECT_OPTIONS: AspectOption[] = [
+  { label: '1 : 1',  value: 1       },
+  { label: '4 : 3',  value: 4 / 3   },
+  { label: '16 : 9', value: 16 / 9  },
+  { label: '2 : 3',  value: 2 / 3   },
+  { label: '3 : 4',  value: 3 / 4   },
+];
+
 interface Props {
   src: string;
   aspect?: number;
+  aspectOptions?: AspectOption[];
   onConfirm: (blob: Blob) => void;
   onCancel: () => void;
 }
@@ -19,7 +33,6 @@ async function cropImageToBlob(src: string, pixelCrop: Area): Promise<Blob> {
       const scale = Math.min(1, MAX_PX / Math.max(pixelCrop.width, pixelCrop.height));
       const outW  = Math.round(pixelCrop.width  * scale);
       const outH  = Math.round(pixelCrop.height * scale);
-
       const canvas = document.createElement('canvas');
       canvas.width  = outW;
       canvas.height = outH;
@@ -37,15 +50,28 @@ async function cropImageToBlob(src: string, pixelCrop: Area): Promise<Blob> {
   });
 }
 
-export default function ImageCropper({ src, aspect = 4 / 3, onConfirm, onCancel }: Props) {
-  const [crop, setCrop]                     = useState({ x: 0, y: 0 });
-  const [zoom, setZoom]                     = useState(1);
-  const [croppedArea, setCroppedArea]       = useState<Area | null>(null);
-  const [loading, setLoading]               = useState(false);
+export default function ImageCropper({
+  src,
+  aspect = 4 / 3,
+  aspectOptions,
+  onConfirm,
+  onCancel,
+}: Props) {
+  const [currentAspect, setCurrentAspect] = useState(aspect);
+  const [crop, setCrop]                   = useState({ x: 0, y: 0 });
+  const [zoom, setZoom]                   = useState(1);
+  const [croppedArea, setCroppedArea]     = useState<Area | null>(null);
+  const [loading, setLoading]             = useState(false);
 
   const onCropComplete = useCallback((_: Area, pixels: Area) => {
     setCroppedArea(pixels);
   }, []);
+
+  const handleAspectChange = (value: number) => {
+    setCurrentAspect(value);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+  };
 
   const handleConfirm = async () => {
     if (!croppedArea) return;
@@ -54,6 +80,8 @@ export default function ImageCropper({ src, aspect = 4 / 3, onConfirm, onCancel 
     onConfirm(blob);
     setLoading(false);
   };
+
+  const options = aspectOptions ?? ASPECT_OPTIONS;
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-black/90">
@@ -64,7 +92,7 @@ export default function ImageCropper({ src, aspect = 4 / 3, onConfirm, onCancel 
           image={src}
           crop={crop}
           zoom={zoom}
-          aspect={aspect}
+          aspect={currentAspect}
           onCropChange={setCrop}
           onZoomChange={setZoom}
           onCropComplete={onCropComplete}
@@ -78,8 +106,28 @@ export default function ImageCropper({ src, aspect = 4 / 3, onConfirm, onCancel 
 
       {/* Controles */}
       <div className="shrink-0 bg-black/80 backdrop-blur-sm px-6 py-5 flex flex-col gap-4">
+
+        {/* Opciones de proporción */}
+        <div className="flex items-center gap-2 flex-wrap justify-center">
+          {options.map(opt => (
+            <button
+              key={opt.label}
+              type="button"
+              onClick={() => handleAspectChange(opt.value)}
+              className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+                currentAspect === opt.value
+                  ? 'bg-white text-black border-white font-semibold'
+                  : 'border-white/20 text-white/50 hover:border-white/50 hover:text-white'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Zoom */}
         <div className="flex items-center gap-3">
-          <span className="text-white/50 text-xs w-8">−</span>
+          <span className="text-white/50 text-xs w-4">−</span>
           <input
             type="range"
             title="Zoom"
@@ -90,8 +138,10 @@ export default function ImageCropper({ src, aspect = 4 / 3, onConfirm, onCancel 
             onChange={e => setZoom(Number(e.target.value))}
             className="flex-1 accent-white h-1 cursor-pointer"
           />
-          <span className="text-white/50 text-xs w-8 text-right">+</span>
+          <span className="text-white/50 text-xs w-4 text-right">+</span>
         </div>
+
+        {/* Acciones */}
         <div className="flex gap-3 justify-end">
           <button
             type="button"
@@ -109,8 +159,8 @@ export default function ImageCropper({ src, aspect = 4 / 3, onConfirm, onCancel 
             {loading ? 'Procesando…' : 'Recortar'}
           </button>
         </div>
-      </div>
 
+      </div>
     </div>
   );
 }

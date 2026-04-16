@@ -19,8 +19,10 @@ export default function DisplayCard({ product, onEdit, onDelete }: Props) {
   };
 
   const handleDelete = async () => {
+    if (!confirm(`¿Eliminar "${product.name}"?`)) return;
     setDeleting(true);
-    await supabase.from('products').delete().eq('id', product.id);
+    const { error } = await supabase.from('products').delete().eq('id', product.id);
+    if (error) { alert('Error al eliminar: ' + error.message); setDeleting(false); return; }
     onDelete?.(product.id);
   };
 
@@ -61,6 +63,8 @@ export default function DisplayCard({ product, onEdit, onDelete }: Props) {
 
         {/* Expandir */}
         <button
+          type="button"
+          title={expanded ? 'Contraer' : 'Expandir'}
           onClick={() => setExpanded(v => !v)}
           className="shrink-0 text-white/30 hover:text-white transition-colors"
         >

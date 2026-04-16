@@ -3,7 +3,7 @@ import type { Product, ProductInsert } from "../types/types";
 import Switch from "./ui/Switch";
 import { X, Upload } from "lucide-react";
 import { supabase } from '../lib/supabase';
-import ImageCropper from './ui/ImageCropper';
+import ImageCropper, { ASPECT_OPTIONS } from './ui/ImageCropper';
 
 const CATEGORIES = [
   { label: 'Bebida',  value: 'bebida'  },
@@ -15,6 +15,7 @@ const emptyProduct: ProductInsert = {
   name: "",
   price: 0,
   is_active: false,
+  is_recommended: false,
   description: "",
   category: "bebida",
   img_url: null,
@@ -134,6 +135,7 @@ const ProductForm = forwardRef<ProductFormHandle, Props>(({ onSave }, ref) => {
       <ImageCropper
         src={cropSrc}
         aspect={1}
+        aspectOptions={ASPECT_OPTIONS}
         onConfirm={handleCropConfirm}
         onCancel={handleCropCancel}
       />
@@ -169,19 +171,21 @@ const ProductForm = forwardRef<ProductFormHandle, Props>(({ onSave }, ref) => {
 
         {/* Precio + Categoría */}
         <div className="flex gap-3">
-          <div className="flex flex-col gap-1.5 w-28">
-            <label className="text-xs font-semibold uppercase tracking-widest text-white/50">Precio</label>
-            <div className="flex items-center bg-white/10 rounded-lg px-3 py-2 focus-within:ring-1 focus-within:ring-white/30">
-              <span className="text-white/40 text-sm mr-1">$</span>
-              <input
-                type="number"
-                name="price"
-                value={form.price}
-                onChange={handleChange}
-                className="bg-transparent text-white text-sm outline-none w-full"
-              />
+          {form.category !== 'lectura' && (
+            <div className="flex flex-col gap-1.5 w-28">
+              <label className="text-xs font-semibold uppercase tracking-widest text-white/50">Precio</label>
+              <div className="flex items-center bg-white/10 rounded-lg px-3 py-2 focus-within:ring-1 focus-within:ring-white/30">
+                <span className="text-white/40 text-sm mr-1">$</span>
+                <input
+                  type="number"
+                  name="price"
+                  value={form.price}
+                  onChange={handleChange}
+                  className="bg-transparent text-white text-sm outline-none w-full"
+                />
+              </div>
             </div>
-          </div>
+          )}
           <div className="flex flex-col gap-1.5 flex-1">
             <label className="text-xs font-semibold uppercase tracking-widest text-white/50">Categoría</label>
             <select
@@ -203,6 +207,19 @@ const ProductForm = forwardRef<ProductFormHandle, Props>(({ onSave }, ref) => {
               onChange={v => setForm(p => ({ ...p, is_active: v }))}
             />
           </div>
+        </div>
+
+        {/* Recomendación personal */}
+        <div className="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2.5">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-xs font-semibold uppercase tracking-widest text-white/50">Recomendación personal</span>
+            <span className="text-xs text-white/30">Muestra un badge destacado en el menú</span>
+          </div>
+          <Switch
+            key={String(form.is_recommended)}
+            defaultChecked={form.is_recommended}
+            onChange={v => setForm(p => ({ ...p, is_recommended: v }))}
+          />
         </div>
 
         {/* Descripción */}
