@@ -178,10 +178,13 @@ const ProductForm = forwardRef<ProductFormHandle, Props>(({ onSave }, ref) => {
                 <span className="text-white/40 text-sm mr-1">$</span>
                 <input
                   type="number"
+                  inputMode="decimal"
                   name="price"
-                  value={form.price}
+                  value={form.price || ""}
+                  placeholder="0"
+                  onFocus={e => e.target.select()}
                   onChange={handleChange}
-                  className="bg-transparent text-white text-sm outline-none w-full"
+                  className="bg-transparent text-white text-sm outline-none w-full placeholder:text-white/25"
                 />
               </div>
             </div>
