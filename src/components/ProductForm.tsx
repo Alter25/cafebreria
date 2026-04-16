@@ -1,13 +1,15 @@
-import React, { useRef, useState, useEffect } from "react"
-import type { Product, ProductInsert } from "../types/types"
+import React, { useRef, useState, forwardRef, useImperativeHandle } from "react";
+import type { Product, ProductInsert } from "../types/types";
 import Switch from "./ui/Switch";
 import { X, Upload } from "lucide-react";
-import ImagePlaceHolder from "./ui/ImagePlaceHolder";
+import { supabase } from '../lib/supabase';
+import ImageCropper from './ui/ImageCropper';
 
-interface Props {
-  producto: Product | null;
-  onSave: () => void;
-}
+const CATEGORIES = [
+  { label: 'Bebida',  value: 'bebida'  },
+  { label: 'Comida',  value: 'comida'  },
+  { label: 'Lectura', value: 'lectura' },
+] as const;
 
 const emptyProduct: ProductInsert = {
   name: "",
@@ -16,122 +18,273 @@ const emptyProduct: ProductInsert = {
   description: "",
   category: "bebida",
   img_url: null,
+};
+
+interface Props {
+  onSave: () => void;
 }
 
+export interface ProductFormHandle {
+  open: (product?: Product) => void;
+}
 
-export default function ProductForm({ producto }: Props) {
-  const ref = useRef<HTMLDialogElement>(null);
-  const [form, setForm] = useState<ProductInsert>(emptyProduct);
-  const [imageFile, setImageFile] = useState<File | null>(null);
+const ProductForm = forwardRef<ProductFormHandle, Props>(({ onSave }, ref) => {
+  const dialogRef  = useRef<HTMLDialogElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [editId, setEditId]             = useState<number | null>(null);
+  const [form, setForm]                 = useState<ProductInsert>(emptyProduct);
+  const [imageFile, setImageFile]       = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  // const [active, setActive] = useState(false);
+  const [cropSrc, setCropSrc]           = useState<string | null>(null);
+  const [loading, setLoading]           = useState(false);
+  const [error, setError]               = useState<string | null>(null);
 
+  useImperativeHandle(ref, () => ({
+    open: (product?: Product) => {
+      if (product) {
+        const { id, created_at, ...rest } = product;
+        setEditId(id);
+        setForm(rest);
+        setImagePreview(product.img_url ?? null);
+      } else {
+        setEditId(null);
+        setForm(emptyProduct);
+        setImagePreview(null);
+      }
+      setImageFile(null);
+      setError(null);
+      dialogRef.current?.showModal();
+    },
+  }));
 
-  useEffect(() => {
-    if (producto) {
-      const { id, ...rest } = producto;
-      setForm(rest);
-    } else {
-      setForm(emptyProduct);
-    }
-    setImageFile(null);
-    setImagePreview(null);
-  }, [producto])
-
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setForm((prev) => ({
+    setForm(prev => ({
       ...prev,
-      [name]: name === 'name' || name === 'description' || name === 'price'
-        ? value === '' ? null : value : Number(value),
-    }))
-  }
+      [name]: name === 'price'
+        ? Number(value)
+        : name === 'category'
+          ? value as Product['category']
+          : value || null,
+    }));
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
-  }
+    dialogRef.current?.close();
+    setCropSrc(URL.createObjectURL(file));
+    e.target.value = '';
+  };
 
-  const handleActive = () => {
-    const active = form.is_active;
-    setForm((prev) => ({
-      ...prev,
-      is_active: !active,
-    }))
-  }
+  const handleCropConfirm = (blob: Blob) => {
+    const croppedFile = new File([blob], 'image.jpg', { type: 'image/jpeg' });
+    setImageFile(croppedFile);
+    setImagePreview(URL.createObjectURL(blob));
+    setCropSrc(null);
+    dialogRef.current?.showModal();
+  };
+
+  const handleCropCancel = () => {
+    setCropSrc(null);
+    dialogRef.current?.showModal();
+  };
+
+  const handleSubmit = async () => {
+    if (!form.name?.trim()) return;
+    setLoading(true);
+    setError(null);
+
+    let img_url = form.img_url ?? null;
+
+    if (imageFile) {
+      const ext = imageFile.name.split('.').pop();
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from('products')
+        .upload(filename, imageFile, { upsert: false });
+      if (uploadError) {
+        setError('Error al subir imagen: ' + uploadError.message);
+        setLoading(false);
+        return;
+      }
+      const { data: urlData } = supabase.storage.from('products').getPublicUrl(filename);
+      img_url = urlData.publicUrl;
+    }
+
+    const payload = { ...form, img_url };
+    const { error: dbError } = editId
+      ? await supabase.from('products').update(payload).eq('id', editId)
+      : await supabase.from('products').insert([payload]);
+
+    if (dbError) {
+      setError('Error al guardar: ' + dbError.message);
+    } else {
+      onSave();
+      dialogRef.current?.close();
+    }
+    setLoading(false);
+  };
 
   return (
-    <dialog ref={ref} className="not-open:hidden rounded-xl backdrop:bg-amber-smoke/40 w-85 h-130 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-2">
-      <div className="flex flex-col items-center w-full h-full">
-        <div className="flex w-full justify-end">
-          {producto ?
-            <div className="flex-1 mx-4">
-              <h1 className="text-xl font-semibold font-serif">{producto.name}</h1>
-            </div>
-            : <div className="flex-1 flex justify-center mx-4">
-              <h1 className="text-xl font-semibold font-serif">Nuevo</h1>
-            </div>
-          }
-          <button onClick={() => ref.current?.close()}><X /></button>
+    <>
+    {cropSrc && (
+      <ImageCropper
+        src={cropSrc}
+        aspect={1}
+        onConfirm={handleCropConfirm}
+        onCancel={handleCropCancel}
+      />
+    )}
+    <dialog
+      ref={dialogRef}
+      className="not-open:hidden bg-blue-mirage text-white rounded-xl backdrop:bg-black/60 w-85 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 shadow-2xl border border-white/10"
+    >
+      <div className="flex flex-col gap-4">
+
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h1 className="text-base font-semibold text-white">
+            {editId ? form.name : 'Nuevo producto'}
+          </h1>
+          <button type="button" onClick={() => dialogRef.current?.close()} className="text-white/30 hover:text-white transition-colors">
+            <X size={18} />
+          </button>
         </div>
-        <div className="w-78 flex flex-col p-4">
-          <div className="flex flex-col mb-3">
-            <label htmlFor="name" className="mb-2 text-sm">Nombre</label>
-            <input
-              type="text"
-              value={form.name}
-              name="name"
+
+        {/* Nombre */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold uppercase tracking-widest text-white/50">Nombre</label>
+          <input
+            type="text"
+            name="name"
+            value={form.name ?? ''}
+            onChange={handleChange}
+            className="bg-white/10 text-white text-sm rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-white/30 placeholder-white/20"
+            placeholder="Nombre del producto"
+          />
+        </div>
+
+        {/* Precio + Categoría */}
+        <div className="flex gap-3">
+          <div className="flex flex-col gap-1.5 w-28">
+            <label className="text-xs font-semibold uppercase tracking-widest text-white/50">Precio</label>
+            <div className="flex items-center bg-white/10 rounded-lg px-3 py-2 focus-within:ring-1 focus-within:ring-white/30">
+              <span className="text-white/40 text-sm mr-1">$</span>
+              <input
+                type="number"
+                name="price"
+                value={form.price}
+                onChange={handleChange}
+                className="bg-transparent text-white text-sm outline-none w-full"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-1.5 flex-1">
+            <label className="text-xs font-semibold uppercase tracking-widest text-white/50">Categoría</label>
+            <select
+              name="category"
+              value={form.category}
               onChange={handleChange}
-              className="border-1.5 outline-2 hover:outline-blue-300 border/50 rounded-md outline-blue-mirage/40"
+              className="bg-white/10 text-white text-sm rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-white/30 [&>option]:bg-blue-mirage"
+            >
+              {CATEGORIES.map(c => (
+                <option key={c.value} value={c.value}>{c.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col gap-1.5 justify-end pb-2">
+            <label className="text-xs font-semibold uppercase tracking-widest text-white/50">Activo</label>
+            <Switch
+              key={String(form.is_active)}
+              defaultChecked={form.is_active}
+              onChange={v => setForm(p => ({ ...p, is_active: v }))}
             />
           </div>
-          <div className="w-70 flex justify-between items-center">
-            <div className="flex flex-col">
-              <label htmlFor="name" className="mb-2 text-sm">precio</label>
-              <div>
-                <span className="mr-2">$</span>
-                <input
-                  type="number"
-                  value={form.price}
-                  name="price"
-                  onChange={handleChange}
-                  className="w-20 outline-2 hover:outline-blue-300 pl-2 border-1.5 border/50 rounded-md outline-blue-mirage/40"
-                />
-              </div>
-            </div>
-            <div className="translate-y-2.5">
-              <span className="mx-2">Activo: </span>
-              <Switch defaultChecked={form.is_active} onChange={() => handleActive()} />
-            </div>
-          </div>
-          <div className="w-full mt-4">
-            <label htmlFor="description">Descripcion</label>
-            <textarea id="description" name="description" className="border w-70 outline-2 hover:outline-blue-300 rounded-md outline-blue-mirage/40" />
-          </div>
         </div>
-        <div className="w-full flex flex-col items-center">
-          <label>Imagen del producto</label>
-          <ImagePlaceHolder className="min-w-60 h-34 my-2 flex justify-center items-center border-2 outline-2 border-blue-mirage hover:outline-blue-300 outline-blue-mirage/40">
-            {
-              imagePreview || form.img_url ? (
-                <img src={imagePreview ?? form.img_url ?? ''} alt="preview" className="h-full object-cover rounded-md" />
-              ) : (
-                <label>
-                  <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-                  <Upload size={34} className="text-blue-mirage/50" />
-                </label>
-              )
+
+        {/* Descripción */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold uppercase tracking-widest text-white/50">Descripción</label>
+          <textarea
+            name="description"
+            value={form.description ?? ''}
+            onChange={handleChange}
+            rows={2}
+            placeholder="Descripción opcional"
+            className="bg-white/10 text-white text-sm rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-white/30 placeholder-white/20 resize-none"
+          />
+        </div>
+
+        {/* Imagen */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold uppercase tracking-widest text-white/50">Imagen</label>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex justify-center items-center h-28 bg-white/5 border border-dashed border-white/20 hover:bg-white/10 hover:border-white/40 rounded-lg overflow-hidden cursor-pointer transition-colors"
+          >
+            {imagePreview
+              ? <img src={imagePreview} alt="preview" className="h-full w-full object-cover" />
+              : <Upload size={26} className="text-white/20" />
             }
-          </ImagePlaceHolder>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            title="Seleccionar imagen"
+            className="hidden"
+            onChange={handleImageChange}
+          />
+          {imagePreview && (
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-xs text-white/30 hover:text-white/60 transition-colors"
+              >
+                Recortar de nuevo
+              </button>
+              <button
+                type="button"
+                onClick={() => { setImageFile(null); setImagePreview(null); setForm(p => ({ ...p, img_url: null })); }}
+                className="text-xs text-white/30 hover:text-red-400 transition-colors"
+              >
+                Quitar imagen
+              </button>
+            </div>
+          )}
         </div>
-        <div className="w-full flex justify-end mt-2">
-          <button className="border-2 border-to-blue-900 rounded-md px-4 py-1 mx-2 bg-blue-mirage/80 text-blue-100">Guardar</button>
-          <button onClick={() => { ref.current?.close() }} className="border-2 border-to-blue-900 rounded-md px-4 py-1 mx-2 bg-blue-mirage/20 text-blue-400/50">Cancelar</button>
+
+        {error && <p className="text-red-400 text-xs">{error}</p>}
+
+        {/* Acciones */}
+        <div className="flex justify-end gap-2 pt-1">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={loading || !form.name?.trim()}
+            className="bg-white/15 hover:bg-white/25 disabled:opacity-30 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors"
+          >
+            {loading ? 'Guardando…' : 'Guardar'}
+          </button>
+          <button
+            type="button"
+            onClick={() => dialogRef.current?.close()}
+            className="text-white/50 hover:text-white hover:bg-white/10 text-sm px-5 py-2 rounded-lg transition-colors"
+          >
+            Cancelar
+          </button>
         </div>
+
       </div>
     </dialog>
-  )
-}
+    </>
+  );
+});
+
+ProductForm.displayName = 'ProductForm';
+export default ProductForm;

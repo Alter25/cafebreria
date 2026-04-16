@@ -6,13 +6,22 @@ import { supabase } from "../../lib/supabase";
 
 interface Props {
   product: Product;
+  onEdit?: (product: Product) => void;
+  onDelete?: (id: number) => void;
 }
 
-export default function DisplayCard({ product }: Props) {
+export default function DisplayCard({ product, onEdit, onDelete }: Props) {
   const [expanded, setExpanded] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const handleActiveChange = async (checked: boolean) => {
     await supabase.from('products').update({ is_active: checked }).eq('id', product.id);
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    await supabase.from('products').delete().eq('id', product.id);
+    onDelete?.(product.id);
   };
 
   return (
@@ -65,6 +74,23 @@ export default function DisplayCard({ product }: Props) {
           <div className="flex-1 flex flex-col gap-1 min-w-0">
             <p className="text-xs text-white/40 italic">{product.description ?? '—'}</p>
             <span className="text-sm text-white/70 mt-1">${product.price} Mxn</span>
+            <div className="flex gap-2 mt-2">
+              <button
+                type="button"
+                onClick={() => onEdit?.(product)}
+                className="text-xs px-3 py-1 rounded-lg bg-white/10 text-white/60 hover:bg-white/20 hover:text-white transition-colors"
+              >
+                Editar
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleting}
+                className="text-xs px-3 py-1 rounded-lg bg-white/5 text-white/30 hover:bg-red-500/20 hover:text-red-400 transition-colors disabled:opacity-40"
+              >
+                {deleting ? 'Eliminando…' : 'Eliminar'}
+              </button>
+            </div>
           </div>
           {product.img_url && (
             <div className="shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-white/10">
