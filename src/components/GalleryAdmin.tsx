@@ -53,7 +53,7 @@ export default function GalleryAdmin() {
               <p className="text-sm text-white truncate">{img.alt}</p>
               {img.span && (
                 <span className="text-xs text-white/40 bg-white/10 rounded px-1.5 py-0.5">
-                  {img.span}
+                  {img.span === 'tall' ? 'Alto' : img.span === 'wide' ? 'Ancho' : img.span}
                 </span>
               )}
             </div>
